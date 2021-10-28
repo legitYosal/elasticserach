@@ -1,4 +1,5 @@
 """ Controller Layer """
+from pydantic import BaseModel
 from .elastic import ElasticSearch
 from .utils.wrappers import get_elk_client
 
@@ -7,6 +8,10 @@ class NoteBook:
         The layer that is responsible managing requests from client and
         interacting with storage layer... it is controller
     """
+
+    class Body(BaseModel):
+        title: str
+        body: str
 
     NOTEBOOK_INDEX = 'notebooks'
 

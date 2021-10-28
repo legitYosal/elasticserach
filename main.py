@@ -1,7 +1,23 @@
-from src import notebook
+""" API Layer """
+from fastapi import FastAPI
+
 from src.notebook import NoteBook
-from src.elastic import ElasticSearch
+
+app = FastAPI()
+
+
+@app.get('/note-book/')
+def get_notebooks():
+    return NoteBook.get()
+
+@app.post('/note-book/')
+def get_notebooks(notebook: NoteBook.Body):
+    return NoteBook.create(
+        title=notebook.title,
+        body=notebook.body
+    )
 
 if __name__ == '__main__':
-    print(NoteBook.create(title='test', body='my body'))
-    print(NoteBook.get())
+    print("""
+        Run run_srcirpt.sh and go to http://localhost:8000/docs
+    """)
