@@ -1,23 +1,15 @@
-""" API Layer """
-from fastapi import FastAPI
+import fire
+from agents import cli
 
-from src.notebook import NoteBook
+def simulate(agent: str, replicas: int = 1):
+    """
+        client tool for simulating high load
+    """
+    if agent == 'elastic':
+        cli.simulate_elastic(replicas)
+    else: 
+        print('Not a valid option')
 
-app = FastAPI()
-
-
-@app.get('/note-book/')
-def get_notebooks():
-    return NoteBook.get()
-
-@app.post('/note-book/')
-def get_notebooks(notebook: NoteBook.Body):
-    return NoteBook.create(
-        title=notebook.title,
-        body=notebook.body
-    )
 
 if __name__ == '__main__':
-    print("""
-        Run run_srcirpt.sh and go to http://localhost:8000/docs
-    """)
+    fire.Fire(simulate)
