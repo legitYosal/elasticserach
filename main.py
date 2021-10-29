@@ -7,6 +7,8 @@ def simulate(agent: str, replicas: int = 1):
     """
     if agent == 'elastic':
         cli.simulate_elastic(replicas)
+    elif agent == 'postgres':
+        cli.simulate_postgres(replicas)
     else: 
         print('Not a valid option')
 

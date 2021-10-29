@@ -2,3 +2,5 @@ elasticsearch==7.15.1
 fastapi==0.70.0
 uvicorn==0.15.0
 fire==0.4.0
+requests==2.26.0
+psycopg2==2.9.1

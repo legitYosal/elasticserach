@@ -2,10 +2,15 @@
 from datetime import datetime
 from pydantic import BaseModel
 from .elastic import NoteElastic, NoteViewElastic
+from .postgres import NoteViewsSQL
 from .utils.wrappers import get_note_elk_client
 
 class NoteViews:
-    NOTEVIEWS_INDEX_PREFIX = 'note_views_index'
+    NOTEVIEWS_INDEX_PREFIX = 'noteviews_index'
+
+    @classmethod
+    def get_index_regex(cls, )-> str:
+        return cls.NOTEVIEWS_INDEX_PREFIX + '*'
 
     @classmethod
     def get_note_views_index(cls,) -> str:
@@ -15,14 +20,25 @@ class NoteViews:
         return f'{cls.NOTEVIEWS_INDEX_PREFIX}_{time_str}'
 
     @classmethod
-    def get_noteviews(cls, ) -> dict:
-        client = NoteViewElastic()
-        notes = [{
-            'id': note['_id'],
-            'title': note['_source']['title'],
-            'text': note['_source']['text'],
-            'views': client.get_views('note_views_index_2021-10-28_22_33'),
-        } for note in Note.get()['hits']['hits']]
+    def get_noteviews(cls, by_elk=True) -> dict:
+        if by_elk:
+            client = NoteViewElastic()
+        else:
+            client = NoteViewsSQL()
+
+        notes = []
+        for note in Note.get()['hits']['hits']:
+            if by_elk:
+                views, res_time = client.get_views(cls.get_index_regex(), note_id=note['_id'])
+            else:
+                views, res_time = client.get_noteviews_count(note['_id'])
+            notes.append({
+                'id': note['_id'],
+                'title': note['_source']['title'],
+                'text': note['_source']['text'],
+                'views': views,
+                'res_time_mls': res_time
+            })
         return notes
 
 class Note:

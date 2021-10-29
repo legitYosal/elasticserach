@@ -1,4 +1,5 @@
 """ Model Layer """
+from typing import Tuple
 from elasticsearch import Elasticsearch as _ElkClient
 from .utils import config
 
@@ -25,10 +26,18 @@ class BaseElastic:
 
 class NoteViewElastic(BaseElastic):
 
-    def get_views(self, index: str) -> int:
-        return self.client.cat.count(
-            index=index, 
+    def get_views(self, index_reg: str, note_id: str) -> Tuple[int, float]:
+        import requests
+        import time
+        
+        target_add = 'http://' + config.ELIK_HOSTS[0] + ':' + str(config.ELK_PORT) + \
+                f'/{index_reg}/_count'
+        now = time.time()
+        res = requests.post(
+            target_add,
+            json={'query':{'match':{'note_id':note_id}}}
         )
+        return res.json()['count'], (time.time() - now) * 1000
 
 class NoteElastic(BaseElastic):
 
@@ -55,5 +64,3 @@ class NoteElastic(BaseElastic):
             index=index,
             body=query_dict if not empty_query else {}
         )
-
-    

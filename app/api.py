@@ -25,6 +25,15 @@ def create_note(note: Note.Body):
 def get_note_views():
     return NoteViews.get_noteviews()
 
+@app.get('/note/views/elk/')
+def get_note_views():
+    return NoteViews.get_noteviews()
+
+@app.get('/note/views/sql/')
+def get_note_views_sql():
+    return NoteViews.get_noteviews(by_elk=False)
+
+
 if __name__ == '__main__':
     print("""
         Run run_srcirpt.sh and go to http://localhost:8000/docs
