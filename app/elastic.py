@@ -53,7 +53,6 @@ class NoteElastic(BaseElastic):
             query_type = 'match' if len(title_query.split(' ')) > 1 else 'fuzzy'
             query_dict['query'][query_type] = {}
             query_dict['query'][query_type]['title'] = title_query
-            print(query_dict)
 
         if text_query:
             empty_query = False
